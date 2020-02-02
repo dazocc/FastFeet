@@ -1,28 +1,38 @@
 import { Router } from 'express';
+import multer from 'multer';
 
-// import UserController from './app/controllers/UserController';
+import multerConfig from './config/multer';
+
 import SessionController from './app/controllers/SessionController';
 import RecipientController from './app/controllers/RecipientController';
+import DeliveryManController from './app/controllers/DeliveryManController';
+import FileController from './app/controllers/FileController';
 import authMiddleware from './app/middlewares/auth';
+import checkExistsId from './app/middlewares/checkExistsId';
+import checkUserIsAdmin from './app/middlewares/checkUserIsAdmin';
 
 const routes = new Router();
-
-function checkExistsId(req, res, next) {
-  const { id } = req.params;
-
-  if (!id) {
-    return res.status(400).json({ error: 'Id is required' });
-  }
-
-  req.id = id;
-
-  return next();
-}
+const upload = multer(multerConfig);
 
 // routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
+
+/** Daqui pra baixo soh funcionaldiades para usuario logado */
 routes.use(authMiddleware);
 routes.post('/recipients', RecipientController.store);
 routes.put('/recipients/:id', checkExistsId, RecipientController.update);
+
+routes.post('/files', upload.single('file'), FileController.store);
+/** Daqui pra baixo soh funcionalidades para admin */
+routes.use(checkUserIsAdmin);
+
+routes.get('/delivererymans', DeliveryManController.index);
+routes.post('/delivererymans', DeliveryManController.store);
+routes.put('/delivererymans/:id', checkExistsId, DeliveryManController.update);
+routes.delete(
+  '/delivererymans/:id',
+  checkExistsId,
+  DeliveryManController.delete
+);
 
 export default routes;
