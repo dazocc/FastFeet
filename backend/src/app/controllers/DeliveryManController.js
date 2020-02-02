@@ -43,10 +43,12 @@ class DeliveryManController {
       return res.status(400).json({ error: 'Delivery Man not exists' });
     }
 
-    const file = await File.findByPk(req.body.avatar_id);
+    if (req.body.avatar_id) {
+      const file = await File.findByPk(req.body.avatar_id);
 
-    if (!file) {
-      return res.status(400).json({ error: 'Avatar not exists' });
+      if (!file) {
+        return res.status(400).json({ error: 'Avatar not exists' });
+      }
     }
 
     const { id, name, email, avatar_id } = await deliveryMan.update(req.body);
