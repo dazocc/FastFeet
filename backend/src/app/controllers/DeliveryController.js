@@ -3,6 +3,8 @@ import * as Yup from 'yup';
 import Delivery from '../models/Delivery';
 import DeliveryMan from '../models/DeliveryMan';
 import Recipient from '../models/Recipient';
+import Queue from '../../lib/Queue';
+import CadastramentoEncomenda from '../jobs/CadastramentoEncomenda';
 
 class DeliveryController {
   async index(req, res) {
@@ -34,6 +36,11 @@ class DeliveryController {
     }
 
     const delivery = await Delivery.create(req.body);
+
+    await Queue.add(CadastramentoEncomenda.key, {
+      deliveryMan,
+      delivery,
+    });
 
     return res.json(delivery);
   }
