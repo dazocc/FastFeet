@@ -1,4 +1,5 @@
 import * as Yup from 'yup';
+import { parseISO, getHours } from 'date-fns';
 
 import Delivery from '../models/Delivery';
 import DeliveryMan from '../models/DeliveryMan';
@@ -8,7 +9,7 @@ import CadastramentoEncomenda from '../jobs/CadastramentoEncomenda';
 
 class DeliveryController {
   async index(req, res) {
-    const delivery = await Delivery.findAll();
+    const delivery = await Delivery.findAll({ where: { canceledAt: null } });
     return res.json(delivery);
   }
 
@@ -50,6 +51,8 @@ class DeliveryController {
       product: Yup.string(),
       deliveryman_id: Yup.number(),
       recipient_id: Yup.number(),
+      startDate: Yup.date(),
+      endDate: Yup.date(),
     });
 
     if (!(await schema.isValid(req.body))) {
@@ -78,9 +81,48 @@ class DeliveryController {
       }
     }
 
-    const { id, product } = await delivery.update(req.body);
+    if (delivery.canceledAt) {
+      return res.status(400).json({ error: 'Delivery has been canceled' });
+    }
 
-    return res.send({ id, product });
+    if (delivery.startDate) {
+      return res
+        .status(400)
+        .json({ error: 'Product withdrawal has already been done' });
+    }
+
+    if (!delivery.startDate && req.body.endDate) {
+      return res.status(400).json({
+        error:
+          'Product must be removed before being delivered delivery has already been done',
+      });
+    }
+
+    if (delivery.endDate) {
+      return res
+        .status(400)
+        .json({ error: 'Product delivery has already been done' });
+    }
+
+    if (req.body.startDate) {
+      const startHour = getHours(parseISO(req.body.startDate));
+
+      if (startHour < 8 || startHour > 18) {
+        return res.status(400).json({
+          error: 'Withdrawals can only be made between 08:00 and 18:00',
+        });
+      }
+    }
+
+    const {
+      id,
+      product,
+      canceledAt,
+      startDate,
+      endDate,
+    } = await delivery.update(req.body);
+
+    return res.send({ id, product, canceledAt, startDate, endDate });
   }
 
   async delete(req, res) {
