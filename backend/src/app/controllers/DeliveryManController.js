@@ -53,7 +53,7 @@ class DeliveryManController {
 
     const { id, name, email, avatar_id } = await deliveryMan.update(req.body);
 
-    return res.send({ id, name, email, avatar_id });
+    return res.json({ id, name, email, avatar_id });
   }
 
   async delete(req, res) {

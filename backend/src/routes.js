@@ -9,6 +9,8 @@ import DeliveryManController from './app/controllers/DeliveryManController';
 import DeliveryController from './app/controllers/DeliveryController';
 import FileController from './app/controllers/FileController';
 import DeliveryByControler from './app/controllers/DeliveryByControler';
+import DeliveryProblemController from './app/controllers/DeliveryProblemController';
+import DeliveryWithProblemsController from './app/controllers/DeliveryWithProblemsController';
 import authMiddleware from './app/middlewares/auth';
 import checkExistsId from './app/middlewares/checkExistsId';
 import checkUserIsAdmin from './app/middlewares/checkUserIsAdmin';
@@ -27,6 +29,32 @@ routes.put(
   '/deliverymans/deliveries/:id',
   checkExistsId,
   DeliveryByControler.update
+);
+
+routes.get(
+  '/delivery/:id/problems',
+  checkExistsId,
+  DeliveryProblemController.index
+);
+
+routes.post(
+  '/delivery/:id/problems',
+  checkExistsId,
+  DeliveryProblemController.store
+);
+
+routes.put(
+  '/delivery/:id/problems',
+  checkExistsId,
+  DeliveryProblemController.update
+);
+
+routes.get('/deliveries/problems', DeliveryWithProblemsController.index);
+
+routes.post(
+  '/delivery/:id/problems',
+  checkExistsId,
+  DeliveryProblemController.index
 );
 
 /** Daqui pra baixo soh funcionaldiades para usuario logado */

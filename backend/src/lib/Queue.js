@@ -1,9 +1,10 @@
 import Bee from 'bee-queue';
 
 import CadastramentoEncomenda from '../app/jobs/CadastramentoEncomenda';
+import CancelamentoEncomenda from '../app/jobs/CancelamentoEncomenda';
 import redisConfig from '../config/redis';
 
-const jobs = [CadastramentoEncomenda];
+const jobs = [CadastramentoEncomenda, CancelamentoEncomenda];
 
 class Queue {
   constructor() {
