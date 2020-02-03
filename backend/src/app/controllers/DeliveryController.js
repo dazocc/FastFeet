@@ -85,7 +85,7 @@ class DeliveryController {
       return res.status(400).json({ error: 'Delivery has been canceled' });
     }
 
-    if (delivery.startDate) {
+    if (delivery.startDate && req.body.startDate) {
       return res
         .status(400)
         .json({ error: 'Product withdrawal has already been done' });
@@ -98,7 +98,7 @@ class DeliveryController {
       });
     }
 
-    if (delivery.endDate) {
+    if (delivery.endDate && req.body.endDate) {
       return res
         .status(400)
         .json({ error: 'Product delivery has already been done' });

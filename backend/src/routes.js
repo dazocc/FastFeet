@@ -8,6 +8,7 @@ import RecipientController from './app/controllers/RecipientController';
 import DeliveryManController from './app/controllers/DeliveryManController';
 import DeliveryController from './app/controllers/DeliveryController';
 import FileController from './app/controllers/FileController';
+import DeliveryByControler from './app/controllers/DeliveryByControler';
 import authMiddleware from './app/middlewares/auth';
 import checkExistsId from './app/middlewares/checkExistsId';
 import checkUserIsAdmin from './app/middlewares/checkUserIsAdmin';
@@ -17,6 +18,16 @@ const upload = multer(multerConfig);
 
 // routes.post('/users', UserController.store);
 routes.post('/sessions', SessionController.store);
+routes.get(
+  '/deliverymans/:id/deliveries',
+  checkExistsId,
+  DeliveryByControler.index
+);
+routes.put(
+  '/deliverymans/deliveries/:id',
+  checkExistsId,
+  DeliveryByControler.update
+);
 
 /** Daqui pra baixo soh funcionaldiades para usuario logado */
 routes.use(authMiddleware);
